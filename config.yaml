@@ -1,0 +1,43 @@
+model:
+  default: meituan/longcat-2.0:free
+  provider: nous
+  base_url: https://inference-api.nousresearch.com/v1
+agent:
+  max_turns: 150
+  verbose: false
+  reasoning_effort: medium
+plugins:
+  enabled:
+    - image_gen/agnes
+    - video_gen/agnes
+image_gen:
+  provider: agnes
+  use_gateway: true
+  model: agnes-image-2.1-flash
+video_gen:
+  provider: agnes
+  model: agnes-video-2.5-flash
+code_execution:
+  timeout: 300
+  max_tool_calls: 50
+streaming:
+  enabled: false
+mcp_servers:
+  github:
+    command: npx
+    args:
+      - "-y"
+      - "@modelcontextprotocol/server-github"
+    timeout: 120
+custom_providers:
+  - name: agnes
+    base_url: https://apihub.agnes-ai.com/v1
+    api_key: ${AGNES_API_KEY}
+    model: agnes-2.0-flash
+    models:
+      agnes-2.0-flash: {}
+      agnes-2.5-flash: {}
+      agnes-image-2.1-flash: {}
+      agnes-video-2.5-flash: {}
+      agnes-video-v2.0: {}
+    models_discovered: true

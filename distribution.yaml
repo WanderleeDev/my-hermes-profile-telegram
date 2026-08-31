@@ -1,0 +1,17 @@
+name: my-hermes-profile-telegram
+version: 1.0.0
+description: "Hermes profile: telegram - Telegram bot with Agnes AI + GitHub MCP (readonly)"
+author: WanderleeDev
+license: MIT
+hermes_requires: ">=0.12.0"
+
+env_requires:
+  - name: AGNES_API_KEY
+    description: "Agnes AI API key for image/video generation"
+    required: true
+  - name: TELEGRAM_BOT_TOKEN
+    description: "Telegram bot token from @BotFather"
+    required: true
+  - name: GITHUB_TOKEN
+    description: "GitHub fine-grained token (read-only access)"
+    required: true

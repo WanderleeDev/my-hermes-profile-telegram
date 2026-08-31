@@ -1,0 +1,7 @@
+.env
+auth.json
+memories/
+sessions/
+state.db*
+logs/
+.DS_Store
