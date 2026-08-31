@@ -9,9 +9,30 @@ env_requires:
   - name: AGNES_API_KEY
     description: "Agnes AI API key for image/video generation"
     required: true
-  - name: TELEGRAM_BOT_TOKEN
-    description: "Telegram bot token from @BotFather"
+  - name: OPENROUTER_API_KEY
+    description: "OpenRouter API key for LLM access"
     required: true
   - name: GITHUB_TOKEN
     description: "GitHub fine-grained token (read-only access)"
     required: true
+  - name: TELEGRAM_BOT_TOKEN
+    description: "Telegram bot token from @BotFather"
+    required: true
+  - name: TELEGRAM_ALLOWED_USERS
+    description: "Comma-separated Telegram user IDs allowed to interact"
+    required: true
+  - name: TELEGRAM_HOME_CHANNEL
+    description: "Telegram chat ID for the home channel"
+    required: true
+  - name: CLOUDFLARE_API_TOKEN
+    description: "Cloudflare API token for Workers, R2, email"
+    required: false
+  - name: R2_ACCESS_KEY_ID
+    description: "Cloudflare R2 access key ID"
+    required: false
+  - name: R2_SECRET_ACCESS_KEY
+    description: "Cloudflare R2 secret access key"
+    required: false
+  - name: R2_ACCOUNT_ID
+    description: "Cloudflare account ID for R2"
+    required: false
