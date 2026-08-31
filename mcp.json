@@ -4,6 +4,11 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],
       "timeout": 120
+    },
+    "cloudflare": {
+      "command": "npx",
+      "args": ["-y", "@cloudflare/mcp-server-cloudflare"],
+      "timeout": 120
     }
   }
 }
