@@ -5,10 +5,12 @@
       "args": ["-y", "@modelcontextprotocol/server-github"],
       "timeout": 120
     },
-    "cloudflare": {
-      "command": "npx",
-      "args": ["-y", "@cloudflare/mcp-server-cloudflare"],
-      "timeout": 120
+    "cloudflare-api": {
+      "url": "https://mcp.cloudflare.com/mcp",
+      "oauth": {}
+    },
+    "cloudflare-docs": {
+      "url": "https://docs.mcp.cloudflare.com/mcp"
     }
   }
 }
