@@ -1,0 +1,25 @@
+# /etc/fail2ban/jail.local — write via: sudo tee /etc/fail2ban/jail.local
+# EXPONENTIAL bantime: ban doubles each time the same IP is re-banned (2^Count).
+# 1h -> 2h -> 4h -> 8h ... capped internally at Count=20 (~115 years).
+# ignoreip MUST include the user's fixed home IP + localhost so they're never self-banned.
+
+[DEFAULT]
+bantime = 1h
+findtime = 600
+maxretry = 5
+bantime.increment = true
+banfactor = 1
+# Replace 177.91.251.215 with the user's CURRENT fixed IP.
+ignoreip = 127.0.0.1/8 ::1 177.91.251.215
+
+[sshd]
+enabled = true
+port = 22
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 5
+bantime = 1h
+
+# Logarithmic alternative (gentler growth) for the [DEFAULT] bantime.formula:
+#   bantime.formula = ban.Time * (1 + int(math.log(1 + ban.Count * 4))) * 3600
+# (Requires: bantime.increment = true and fail2ban >= 1.0)

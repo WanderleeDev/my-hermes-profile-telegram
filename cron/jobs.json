@@ -1,0 +1,99 @@
+{
+  "jobs": [
+    {
+      "id": "220fbfb8a4da",
+      "name": "Resumen xam-vps",
+      "prompt": "Corre el script de auditoria semanal del server con: bash /home/ubuntu/scripts/weekly-audit.sh\\nToma la salida y formatea un resumen de seguridad y uso del sistema para enviar al usuario.\\nIncluye:\\n- Uso de CPU, RAM, disco (top 3 usos)\\n- Paquetes actualizables (cantidad)\\n- Estado de servicios clave (dokploy, docker swarm, telegram-gateway, fail2ban, ufw)\\n- Si hay alertas de seguridad (fail2ban banned IPs recientes, UFW drops)\\n- Fecha y hora actual\\n\\nUsa tu propia judgment para presentar solo lo relevante y conciso. Formato tipo reporte profesional.\"",
+      "skills": [],
+      "skill": null,
+      "model": "tencent/hy3:free",
+      "provider": "openrouter",
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * 0,3",
+        "display": "0 9 * * 0,3"
+      },
+      "schedule_display": "0 9 * * 0,3",
+      "repeat": {
+        "times": null,
+        "completed": 14
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-07-17T13:27:59.543411+00:00",
+      "next_run_at": "2026-09-02T09:00:00+00:00",
+      "last_run_at": "2026-08-30T09:01:22.160176+00:00",
+      "last_status": "error",
+      "last_error": "RuntimeError: HTTP 401: 无效的令牌 (request id: 20260830090120198099294mRQnJdPP)",
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "8804630280",
+        "chat_name": "Xam",
+        "thread_id": null,
+        "user_id": "8804630280"
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null,
+      "failure_streak": 1
+    },
+    {
+      "id": "3e5ab954d1a5",
+      "name": "Reporte de bans xam-vps",
+      "prompt": "Corre el reporte detallado de seguridad de bans con: bash /home/ubuntu/scripts/ban-report.sh\\nToma la salida y formatea un resumen claro para el usuario.\\nIncluye:\\n- Cuantas IP estan baneadas actualmente (fail2ban status)\\n- Cuantos han sido baneados en total historico\\n- Top 5 IPs sospechosas de los ultimos 24h (si hay)\\n- Notas sobre si hay algun patrón de ataque nuevo (pais, ISP, tipo de ataque)\\n- Fecha y hora actual\\n\\nSi el script da error, intenta capturar el error y reportarelo al usuario.\\nUsa tu own judgment para ser conciso pero informativo.\"",
+      "skills": [],
+      "skill": null,
+      "model": "tencent/hy3:free",
+      "provider": "openrouter",
+      "provider_snapshot": null,
+      "model_snapshot": null,
+      "base_url": null,
+      "script": null,
+      "no_agent": false,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 9 * * 0,3",
+        "display": "0 9 * * 0,3"
+      },
+      "schedule_display": "0 9 * * 0,3",
+      "repeat": {
+        "times": null,
+        "completed": 15
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-07-18T16:37:20.344073+00:00",
+      "next_run_at": "2026-09-02T09:00:00+00:00",
+      "last_run_at": "2026-08-30T09:01:22.164647+00:00",
+      "last_status": "error",
+      "last_error": "RuntimeError: HTTP 401: 无效的令牌 (request id: 20260830090120557243909j1MlDQwZ)",
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "8804630280",
+        "chat_name": "Xam",
+        "thread_id": null,
+        "user_id": "8804630280"
+      },
+      "enabled_toolsets": null,
+      "workdir": null,
+      "fire_claim": null,
+      "failure_streak": 1
+    }
+  ],
+  "updated_at": "2026-08-30T09:01:22.165447+00:00"
+}

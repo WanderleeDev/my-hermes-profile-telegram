@@ -1,0 +1,17 @@
+name: telegram-bot
+version: 1.0.0
+description: "Multi-personality AI assistant for Telegram — bilingual (EN/ES), developer workflows, Cloudflare ops, and media generation (image/video via Agnes AI). Ships with 12+ personalities, cron jobs, and a curated skill library."
+hermes_requires: ">=0.13.0"
+author: wanderleedev
+license: "MIT"
+
+env_requires:
+  - name: OPENROUTER_API_KEY
+    description: "OpenRouter API key for model inference (primary: meituan/longcat-2.0:free)"
+    required: true
+  - name: AGNES_API_KEY
+    description: "Agnes AI API key for image (agnes-image-2.1-flash) and video (agnes-video-2.5-flash) generation"
+    required: true
+  - name: NOUS_API_KEY
+    description: "Nous Research API key for inference-api.nousresearch.com (fallback provider)"
+    required: false
