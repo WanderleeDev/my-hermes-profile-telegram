@@ -43,16 +43,8 @@ Free models churn constantly; always confirm live. Strong picks reported:
 - **Coding:** `qwen3-coder:free` (1M ctx, top free coder), `deepseek/deepseek-v3-base:free`,
   `deepseek/deepseek-r1-distill-llama-70b:free`, `deepseek-v4-flash:free` (1M ctx),
   `nvidia/llama-3.1-nemotron-nano-8b-v1:free`.
-- **Multimodal (vision) — VERIFIED LIVE via `GET /api/v1/models` on 2026-07-18
-  (had `image` in `architecture.input_modalities`):** `google/gemma-4-31b-it:free`
-  (262K ctx — best free vision), `google/gemma-4-26b-a4b-it:free` (262K),
-  `nvidia/nemotron-nano-12b-v2-vl:free` (128K),
-  `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free` (256K),
-  `nvidia/nemotron-3.5-content-safety:free` (128K, moderation not chat).
-  PITFALL: the prior skill IDs `qwen/qwen2.5-vl-3b-instruct:free`,
-  `google/gemini-2.5-pro-exp-03-25:free`, `moonshotai/kimi-vl-a3b-thinking:free` ALL
-  returned HTTP 404 in July 2026. `:free` IDs churn constantly — never trust a static list.
-  Always re-verify live before switching a user to one (see Verification recipe).
+- **Multimodal:** `google/gemini-2.5-pro-exp-03-25:free` (experimental, may vanish),
+  `qwen/qwen2.5-vl-3b-instruct:free`.
 
 Pitfall: many older guides claim "free DeepSeek/Gemini/Mistral" — those $0 IDs frequently
 disappear. Treat any `:free` ID as ephemeral; verify before relying on it.
@@ -75,28 +67,6 @@ A free router only pools other providers' free tiers. Each still enforces its ow
 caps, so you get "free until the free tiers saturate", not infinite. Honest framing for users
 chasing "unlimited": raise the OpenRouter cap with a $10 deposit, or accept intermittent
 rate-limit fallbacks.
-
-## Pitfall: Cron jobs break on model drift
-
-When you change the **global default model** (e.g. `hermes config set model.default`),
-any cron job created on the OLD model will **silently skip** on next tick:
-
-```
-RuntimeError: Skipped to prevent unintended spend: global inference config drifted
-since this job was created (model 'X' -> 'Y'), and this job is unpinned.
-```
-
-**Fix:** Pin the job to the target model:
-```
-cronjob action=update job_id=<ID> provider=<provider> model=<model>
-```
-
-**Prevention:** Always pin cron jobs to a model when creating them (the `cronjob` tool
-accepts `model:` and `provider:` in the create call). Or pin immediately after creation
-if the user might change models later.
-
-**Detection:** Check `hermes cron list` — look for `last_status: error` with the drift
-message. Also check `hermes cron status` for "active job(s)".
 
 ## Reference
 

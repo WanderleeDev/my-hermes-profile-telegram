@@ -93,7 +93,7 @@ Profiles use `~/.hermes/profiles/<name>/` with the same layout. When a profile i
 | CLI commands, subcommands, flags, "how do I run X" | `references/cli-reference.md` |
 | In-session slash commands | `references/slash-commands.md` |
 | Provider setup, API keys, OAuth | `references/providers-and-models.md` |
-| config.yaml sections, toolsets, voice/STT/TTS | `references/configuration.md` |
+| config.yaml sections, toolsets, voice/STT/TTS | `references/configuration.md` (includes env var substitution) |
 | AGENTS.md / .hermes.md / CLAUDE.md project rules | `references/project-context-files.md` |
 | Secret redaction, PII, approval modes, "reset permissions" | `references/security-privacy.md` |
 | Delegation, cron, curator, kanban | `references/background-systems.md` |
@@ -109,6 +109,8 @@ Profiles use `~/.hermes/profiles/<name>/` with the same layout. When a profile i
 | delegate_task "capped at N" reports | `references/delegate-task-concurrency-diagnosis.md` |
 | "Can app X use my Nous Portal subscription/OAuth?" | `references/portal-auth-for-third-party-apps.md` |
 | Connecting a messaging platform (Telegram, Discord, Slack, WhatsApp, …) | docs: `/user-guide/messaging` |
+| Portable config templates (env vars, .env.example) | `templates/config-example.yaml`, `templates/env-example` |
+|  `references/cli-reference.md#sessions` | `references/cli-reference.md#sessions` |
 
 The reference list above is not the feature list — it is the set of topics that
 need more than their docs page. For everything else Hermes ships, fetch

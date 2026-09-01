@@ -1,0 +1,41 @@
+# Hermes Configuration Template
+# This is an example of how to structure portable Hermes configs
+# with environment variable substitution.
+
+# ============================================
+# Custom Providers with Env Vars
+# ============================================
+custom_providers:
+  - name: my-agnes
+    base_url: https://apihub.agnes-ai.com/v1
+    api_key: ${AGNES_API_KEY}  # Reads from .env
+    model: agnes-image-2.1-flash
+    models:
+      agnes-image-2.1-flash: {}
+      agnes-video-2.5-flash: {}
+
+# ============================================
+# Image Generation
+# ============================================
+image_gen:
+  provider: my-agnes
+  model: agnes-image-2.1-flash
+
+# ============================================
+# Video Generation
+# ============================================
+video_gen:
+  provider: my-agnes
+  model: agnes-video-2.5-flash
+
+# ============================================
+# R2 Storage Configuration
+# Read from env vars in plugin code
+# ============================================
+# R2_ACCOUNT_ID=xxx
+# R2_ACCESS_KEY_ID=xxx
+# R2_SECRET_ACCESS_KEY=xxx
+# R2_IMAGE_BUCKET=hermes-image-db
+# R2_VIDEO_BUCKET=hermes-video-db
+# R2_IMAGE_DOMAIN=media.example.com
+# R2_VIDEO_DOMAIN=video.example.com

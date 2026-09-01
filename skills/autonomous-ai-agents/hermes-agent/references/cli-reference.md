@@ -87,6 +87,23 @@ Docs: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/
 hermes sessions list|browse|rename ID TITLE|delete ID|export OUT|prune|stats
 ```
 
+**Important:** `~/.hermes/sessions/` contains HTTP request dumps for debugging, NOT conversation history.
+
+| Path | Contents |
+|------|----------|
+| `~/.hermes/sessions/request_dump_*.json` | HTTP request/response logs (debugging only) |
+| `~/.hermes/state.db` | Actual conversation history (SQLite + FTS5) |
+
+To clean old sessions:
+```bash
+hermes sessions prune --older-than 7d --yes
+```
+
+To list recent sessions:
+```bash
+hermes sessions list
+```
+
 ### Cron / Webhooks
 
 ```

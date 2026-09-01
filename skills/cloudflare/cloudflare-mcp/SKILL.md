@@ -12,6 +12,14 @@ category: cloudflare
 - User expects to perform account actions (create Workers, write KV, edit DNS, manage R2) via MCP and it isn't working.
 - You see OAuth errors, `insufficient_scope`, or "Connection failed" on a Cloudflare MCP server.
 
+## DNS record management (custom domains, Dokploy, etc.)
+The `cloudflare-api` server is the right tool for **creating/editing DNS records**
+(a sibling record's IP is often reusable, e.g. `dokploy.wanderlee.site → A <IP>`).
+Worked recipes and the Dokploy custom-domain pattern live in
+`references/dns-mcp.md`. Key takeaway: add the A record with `proxied: false`
+(grey cloud) so Traefik + Let's Encrypt issues the TLS cert; orange-cloud can
+break MCP/WebSocket traffic. `cloudflare-docs` is READ-ONLY and cannot write DNS.
+
 ## The Cloudflare MCP servers
 Hermes's catalog ships up to five `cloudflare-*` MCP servers (HTTP/StreamableHTTP transport):
 

@@ -23,6 +23,37 @@ Full reference: https://hermes-agent.nousresearch.com/docs/user-guide/configurat
 
 `hermes config check` reports sections missing from an older config.
 
+### Environment Variable Substitution
+
+Hermes supports `${VAR_NAME}` syntax in config.yaml to reference environment variables:
+
+```yaml
+custom_providers:
+  - name: my-provider
+    base_url: https://api.example.com/v1
+    api_key: ${MY_API_KEY}  # Reads from env var MY_API_KEY
+```
+
+This is ideal for:
+- Portable configs (no hardcoded secrets)
+- Sharing config templates (.env.example)
+- Multiple environments (dev/prod) via env vars
+
+When creating portable configs:
+1. Put secrets in `.env`
+2. Use `${VAR_NAME}` in config.yaml
+3. Create `.env.example` as a template
+
+### Hardcoded vs Env Vars for Plugins
+
+Plugins (Python code in `~/.hermes/plugins/`) can read from env vars using:
+```python
+import os
+value = os.environ.get("MY_VAR", "default_value")
+```
+
+When creating plugins, prefer reading from `.env` instead of hardcoding values for portability.
+
 ### Toolsets
 
 Enable/disable via `hermes tools` (interactive) or `hermes tools enable/disable NAME`.

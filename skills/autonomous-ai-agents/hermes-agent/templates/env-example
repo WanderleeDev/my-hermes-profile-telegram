@@ -1,0 +1,38 @@
+# Hermes Environment Variables Template
+# Copy this file to ~/.hermes/.env and fill in your values
+# cp .env.example ~/.hermes/.env
+
+# ============================================
+# Custom Provider API Keys
+# ============================================
+AGNES_API_KEY=your_api_key_here
+
+# ============================================
+# Cloudflare R2 Credentials
+# Get from: https://dash.cloudflare.com -> R2 API Tokens
+# ============================================
+R2_ACCOUNT_ID=your_account_id_here
+R2_ACCESS_KEY_ID=your_access_key_here
+R2_SECRET_ACCESS_KEY=your_secret_key_here
+
+# ============================================
+# R2 Bucket Names (optional - defaults provided)
+# ============================================
+R2_IMAGE_BUCKET=hermes-image-db
+R2_VIDEO_BUCKET=hermes-video-db
+
+# ============================================
+# Custom Domains (optional - defaults provided)
+# Must be CNAME'd to pub-xxx.r2.dev in Cloudflare
+# ============================================
+R2_IMAGE_DOMAIN=media.yourdomain.com
+R2_VIDEO_DOMAIN=video.yourdomain.com
+
+# ============================================
+# Other Common Providers
+# ============================================
+# OPENAI_API_KEY=sk-...
+# ANTHROPIC_API_KEY=sk-ant-...
+# GEMINI_API_KEY=...
+# DEEPSEEK_API_KEY=...
+# GROQ_API_KEY=...
