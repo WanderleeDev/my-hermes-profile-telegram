@@ -1,6 +1,6 @@
 ---
 name: herdr-studio
-description: "Use when managing herdr-studio on xam-vps. Covers CLI commands, workspace management, agent control, mobile web access, and security."
+description: "Use when managing herdr-studio on xam-vps. Covers CLI commands, workspace management, agent control, mobile web access via port 8787, and security."
 tags: [herdr, studio, mobile, agents, telegram, vps, security]
 ---
 
@@ -8,37 +8,34 @@ tags: [herdr, studio, mobile, agents, telegram, vps, security]
 
 ## Resumen
 
-Herdr es el runtime para agentes de coding. Permite ejecutar agentes (Claude Code, Codex, Cursor, etc.) en terminales persistentes que sobreviven a cierres de SSH y reconexiones desde cualquier dispositivo.
+Herdr es el runtime para agentes de coding. Permite ejecutar agentes (Claude Code, Codex, Cursor, Hermes, etc.) en terminales persistentes que sobreviven a cierres de SSH y reconexiones desde cualquier dispositivo.
 
 **Estado actual en xam-vps:**
 - herdr server: `0.8.2` (corriendo en segundo plano)
+- herdr-gui (web client): `0.5.2` (corriendo en puerto 8787)
 - Workspace activo: `w1` (remoter) con 2 paneles
 - Agente activo: `hermes` (idle)
-- herdr-gui (web client): servicio configurado pero binario no disponible
 
-## Cómo Acceder desde el Teléfono
+## Acceso Web desde el Teléfono
 
-### Opción 1: CLI SSH (Recomendado)
+### Opción 1: Desde la misma red WiFi (LAN)
+```
+http://10.0.0.240:8787
+```
+(o la IP local de tu VPS)
+
+### Opción 2: Desde internet (requiere túnel seguro)
+Usa SSH tunnel desde tu teléfono:
 ```bash
-# Desde tu teléfono con SSH
-ssh ubuntu@<IP_VPS>
-herdr list              # Ver workspaces y agentes
-herdr attach w1:p1      # Adjuntarte a un panel
-```
-
-### Opción 2: Web GUI (Local)
-Si estás en la misma red WiFi:
-```
-http://<IP_VPS>:8787
-```
-Token de autenticación: `cat ~/.config/herdr-gui/auth-token`
-
-### Opción 3: Tunnel SSH desde el teléfono
-```bash
-# En tu teléfono (termux o app SSH)
+# En tu teléfono (Termux, Blink Shell, o app SSH)
 ssh -L 8787:localhost:8787 ubuntu@<IP_VPS>
 # Luego abrir navegador: http://localhost:8787
 ```
+
+### Autenticación
+- Token generado automáticamente en: `~/.config/herdr-gui/auth-token`
+- Leer token: `cat ~/.config/herdr-gui/auth-token`
+- El token se usa una sola vez, luego usa session cookie
 
 ## Comandos CLI Esenciales
 
@@ -70,7 +67,7 @@ tail -f ~/.config/herdr/herdr-server.log
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  herdr server (proceso continuo)                    │
+│  herdr server (proceso continuo systemd)            │
 │  - Mantiene terminales vivos                        │
 │  - Persiste sesiones entre reconexiones             │
 │  - Socket: ~/.config/herdr/herdr.sock               │
@@ -79,38 +76,47 @@ tail -f ~/.config/herdr/herdr-server.log
     ┌────────────┼────────────┐
     │            │            │
     ▼            ▼            ▼
- ┌──────┐   ┌──────┐   ┌──────────┐
- │ CLI  │   │ GUI  │   │ Plugins  │
- │herdr │   │ herdr│   │ herdr.   │
- │      │   │-gui  │   │ studio   │
- └──────┘   └──────┘   └──────────┘
+ ┌──────┐   ┌────────┐   ┌──────────┐
+ │ CLI  │   │  Web   │   │ Plugins  │
+ │herdr │   │ herdr  │   │ herdr.   │
+ │      │   │ -gui   │   │ studio   │
+ │      │   │ :8787  │   │          │
+ └──────┘   └────────┘   └──────────┘
 ```
 
 **Flujo:**
 1. `herdr server` corre como proceso systemd
 2. Los agentes (hermes, claude-code, codex) corren en terminales dentro de herdr
-3. Puedes "attach" (adjuntarte) a cualquier terminal desde cualquier lugar
-4. Si cierras SSH o reinicias, los agentes siguen corriendo
+3. herdr-gui provee interfaz web mobile-first
+4. Puedes "attach" (adjuntarte) a cualquier terminal desde cualquier lugar
+5. Si cierras SSH o reinicias, los agentes siguen corriendo
 
 ## Seguridad
 
 ### Autenticación
 - herdr-gui usa token en `~/.config/herdr-gui/auth-token` (modo 0600)
 - El token se envía en cada request API
-- Por defecto solo escucha en localhost (`0.0.0.0:8787`)
+- Por defecto escucha en `0.0.0.0:8787` (todas las interfaces)
 
 ### Recomendaciones de seguridad
-1. **No exponer al internet público** sin VPN/túnel
-2. Usar túnel SSH para acceso remoto seguro
-3. El token es secreto - no compartirlo
-4. herdr-studio puede modificar archivos del workspace (riesgo si está expuesto)
+1. **No exponer al internet público sin protección** - usar túnel SSH
+2. El token es secreto - no compartirlo
+3. herdr-gui puede ejecutar comandos en tu VPS (poderoso)
+4. Para acceso remoto seguro, usa túnel SSH en vez de exponer directamente
 
 ### Verificar exposición
 ```bash
-ss -tlnp | grep 8787  # Debería ser 127.0.0.1:8787 o 0.0.0.0:8787
+ss -tlnp | grep 8787
+# Debería mostrar: 0.0.0.0:8787 (todas las interfaces)
 ```
 
 ## Troubleshooting
+
+### herdr-gui no arranca
+```bash
+systemctl --user status herdr-gui
+systemctl --user restart herdr-gui
+```
 
 ### herdr server no responde
 ```bash
@@ -127,19 +133,12 @@ herdr restart
 ### Ver logs de errores
 ```bash
 journalctl --user -u herdr -f
+journalctl --user -u herdr-gui -f
 ```
 
 ### Reiniciar agente específico
 ```bash
 herdr agent restart hermes
-```
-
-### herdr-gui falla al arrancar
-```bash
-# El binario puede no estar instalado correctamente
-systemctl --user status herdr-gui
-# Opcionalmente reinstalar:
-herdr plugin install powerfooi/herdr-gui
 ```
 
 ## Integración con Hermes
@@ -158,19 +157,39 @@ herdr pane new bash
 herdr send w1:p1 "hermes"
 ```
 
-### 2. Ver estado desde el teléfono
+### 2. Ver estado desde el teléfono (CLI)
 ```bash
 ssh ubuntu@xam-vps
 herdr list
 ```
 
-### 3. Adjuntarse a una sesión existente
+### 3. Ver estado desde el teléfono (Web)
+- Abrir navegador
+- Ir a: `http://<IP_VPS>:8787`
+- Ingresar token: `cat ~/.config/herdr-gui/auth-token`
+
+### 4. Adjuntarse a una sesión existente
 ```bash
 herdr attach w1:p1
 # Ahora estás dentro de la terminal del agente
 ```
 
-### 4. Enviar comando sin adjuntarse
+### 5. Enviar comando sin adjuntarse
 ```bash
 herdr send w1:p1 "ls -la"
 ```
+
+## Instalación (si se necesita reinstalar)
+
+```bash
+# Instalar desde GitHub
+curl -fsSL https://github.com/powerfooi/herdr-studio/releases/latest/download/install-herdr-gui.sh | sh
+
+# Configurar servicio systemd
+herdr-gui service install
+
+# Verificar
+systemctl --user status herdr-gui
+ss -tlnp | grep 8787
+```
+
