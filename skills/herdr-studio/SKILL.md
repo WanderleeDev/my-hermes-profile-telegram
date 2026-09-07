@@ -18,22 +18,23 @@ Herdr es el runtime para agentes de coding. Permite ejecutar agentes (Claude Cod
 
 ## Acceso desde Telegram
 
-El bot puede mostrar información de herdr cuando lo pidas:
+Cuando necesites la URL de herdr-studio, solo pregúntale al bot:
 
-### Comandos disponibles en Telegram
+### Comandos en Telegram
 ```
+/ herdr          → El bot responde con la URL y estado actual
+/herdr studio    → Muestra la URL de acceso web
 /herdr status    → Muestra estado de agentes y workspaces
-/herdr list      → Lista todos los workspaces y paneles
-/herdr <cmd>     → Ejecuta un comando en el workspace w1
 ```
 
-### Ejemplo de uso
-1. Te conectas por SSH al VPS y activas una sesión de herdr
-2. Desde Telegram le pides al bot: "/herdr status"
-3. El bot ejecuta `herdr workspace list` y te responde con el estado
+### Ejemplo de conversación
+- **Tú:** `/herdr`
+- **Bot:** `https://herdr-studio.wanderlee.site\n\nEstado: hermes (idle) en workspace w1`
 
-### Configuración del comando
-El bot ejecuta comandos herdr usando el terminal tool con el workspace adecuado.
+### Qué hace el bot
+Cuando le pides `/herdr`, el bot ejecuta:
+1. `herdr workspace list` para ver agentes activos
+2. Responde con la URL + estado actual
 
 ## URL de acceso web
 ```
