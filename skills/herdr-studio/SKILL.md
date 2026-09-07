@@ -16,25 +16,32 @@ Herdr es el runtime para agentes de coding. Permite ejecutar agentes (Claude Cod
 - Workspace activo: `w1` (remoter) con 2 paneles
 - Agente activo: `hermes` (idle)
 
-## Acceso Web desde el Teléfono
+## Acceso desde Telegram
 
-### URL oficial
+El bot puede mostrar información de herdr cuando lo pidas:
+
+### Comandos disponibles en Telegram
+```
+/herdr status    → Muestra estado de agentes y workspaces
+/herdr list      → Lista todos los workspaces y paneles
+/herdr <cmd>     → Ejecuta un comando en el workspace w1
+```
+
+### Ejemplo de uso
+1. Te conectas por SSH al VPS y activas una sesión de herdr
+2. Desde Telegram le pides al bot: "/herdr status"
+3. El bot ejecuta `herdr workspace list` y te responde con el estado
+
+### Configuración del comando
+El bot ejecuta comandos herdr usando el terminal tool con el workspace adecuado.
+
+## URL de acceso web
 ```
 https://herdr-studio.wanderlee.site
 ```
-- Funciona desde cualquier dispositivo con navegador
-- Requiere autenticación con token o contraseña
-
-### Token de acceso
-```bash
-cat ~/.config/herdr-gui/auth-token
-# Token actual: 2361ab113c811e630c7f40532df268b22cf1ec3e55a08e0e6b7fd7888380a245
-```
-
-### Acceso LAN (misma red WiFi)
-```
-http://10.0.0.240:8787
-```
+- Túnel Cloudflare activo (corriendo)
+- Requiere token o contraseña
+- Mobile-first, accesible desde cualquier navegador
 
 ## Comandos CLI Esenciales
 
