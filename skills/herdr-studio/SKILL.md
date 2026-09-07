@@ -18,24 +18,23 @@ Herdr es el runtime para agentes de coding. Permite ejecutar agentes (Claude Cod
 
 ## Acceso Web desde el Teléfono
 
-### Opción 1: Desde la misma red WiFi (LAN)
+### URL oficial
+```
+https://herdr-studio.wanderlee.site
+```
+- Funciona desde cualquier dispositivo con navegador
+- Requiere autenticación con token o contraseña
+
+### Token de acceso
+```bash
+cat ~/.config/herdr-gui/auth-token
+# Token actual: 2361ab113c811e630c7f40532df268b22cf1ec3e55a08e0e6b7fd7888380a245
+```
+
+### Acceso LAN (misma red WiFi)
 ```
 http://10.0.0.240:8787
 ```
-(o la IP local de tu VPS)
-
-### Opción 2: Desde internet (requiere túnel seguro)
-Usa SSH tunnel desde tu teléfono:
-```bash
-# En tu teléfono (Termux, Blink Shell, o app SSH)
-ssh -L 8787:localhost:8787 ubuntu@<IP_VPS>
-# Luego abrir navegador: http://localhost:8787
-```
-
-### Autenticación
-- Token generado automáticamente en: `~/.config/herdr-gui/auth-token`
-- Leer token: `cat ~/.config/herdr-gui/auth-token`
-- El token se usa una sola vez, luego usa session cookie
 
 ## Comandos CLI Esenciales
 
