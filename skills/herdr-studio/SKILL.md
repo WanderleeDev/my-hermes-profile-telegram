@@ -1,26 +1,44 @@
 ---
 name: herdr-studio
-description: "Use when managing herdr-studio on xam-vps. Covers CLI commands, workspace management, agent control, and mobile web access via Dokploy port 3000."
-tags: [herdr, studio, mobile, agents, telegram, vps]
+description: "Use when managing herdr-studio on xam-vps. Covers CLI commands, workspace management, agent control, mobile web access, and security."
+tags: [herdr, studio, mobile, agents, telegram, vps, security]
 ---
 
 # Herdr Studio - Telegram Bot Profile
 
-## Overview
+## Resumen
 
-Herdr es el runtime para agentes de coding. Herdr-studio es el cliente web mobile-first que permite ver y controlar los agentes desde el teléfono.
+Herdr es el runtime para agentes de coding. Permite ejecutar agentes (Claude Code, Codex, Cursor, etc.) en terminales persistentes que sobreviven a cierres de SSH y reconexiones desde cualquier dispositivo.
 
 **Estado actual en xam-vps:**
-- herdr server: corriendo (version 0.8.2)
-- herdr-studio: accesible via Dokploy en puerto 3000
-- Agente activo: `hermes` en workspace w1, pane p1
-- Plugin: `herdr.studio` instalado
+- herdr server: `0.8.2` (corriendo en segundo plano)
+- Workspace activo: `w1` (remoter) con 2 paneles
+- Agente activo: `hermes` (idle)
+- herdr-gui (web client): servicio configurado pero binario no disponible
 
-## Acceso Web
+## Cómo Acceder desde el Teléfono
 
-herdr-studio está disponible en el puerto 3000 vía Dokploy:
-- URL: `https://xam-vps.tudominio.com` (o IP del VPS)
-- También accesible desde red local: `http://<IP_VPS>:3000`
+### Opción 1: CLI SSH (Recomendado)
+```bash
+# Desde tu teléfono con SSH
+ssh ubuntu@<IP_VPS>
+herdr list              # Ver workspaces y agentes
+herdr attach w1:p1      # Adjuntarte a un panel
+```
+
+### Opción 2: Web GUI (Local)
+Si estás en la misma red WiFi:
+```
+http://<IP_VPS>:8787
+```
+Token de autenticación: `cat ~/.config/herdr-gui/auth-token`
+
+### Opción 3: Tunnel SSH desde el teléfono
+```bash
+# En tu teléfono (termux o app SSH)
+ssh -L 8787:localhost:8787 ubuntu@<IP_VPS>
+# Luego abrir navegador: http://localhost:8787
+```
 
 ## Comandos CLI Esenciales
 
@@ -28,85 +46,76 @@ herdr-studio está disponible en el puerto 3000 vía Dokploy:
 # Status general
 herdr status
 
-# Ver agentes activos
+# Ver workspaces y agentes
+herdr workspace list
 herdr list
 
-# Ver workspaces
-herdr workspace list
+# Adjuntarse a un terminal
+herdr attach w1:p1
 
-# Ver panes/terminales
+# Ver lista de paneles
 herdr pane list
 
-# Controlar agente específico
-herdr agent focus <workspace>:<pane>
+# Ejecutar comando en un panel
+herdr send w1:p1 "comando aqui"
 
-# Ejecutar comando en terminal
-herdr send <workspace>:<pane> "comando a ejecutar"
+# Crear nuevo workspace
+herdr workspace new mi-proyecto --cwd ~/projects/mi-proyecto
 
 # Ver logs del servidor
-cat ~/.config/herdr/herdr-server.log
-
-# Plugins instalados
-ls ~/.local/state/herdr/plugins/
+tail -f ~/.config/herdr/herdr-server.log
 ```
 
-## Estructura de Archivos
+## Arquitectura (Qué hace por detrás)
 
 ```
-~/.config/herdr/           # Config y sockets
-  ├── config.toml
-  ├── herdr.sock          # Socket principal
-  └── herdr-server.log    # Logs del servidor
-
-~/.local/state/herdr/      # Estado y plugins
-  └── plugins/
-      └── herdr.studio/   # Plugin del web client
-
-~/.local/bin/herdr         # Binario principal
-~/.local/bin/herdr-gui     # GUI desktop (opcional)
+┌─────────────────────────────────────────────────────┐
+│  herdr server (proceso continuo)                    │
+│  - Mantiene terminales vivos                        │
+│  - Persiste sesiones entre reconexiones             │
+│  - Socket: ~/.config/herdr/herdr.sock               │
+└────────────────┬────────────────────────────────────┘
+                 │
+    ┌────────────┼────────────┐
+    │            │            │
+    ▼            ▼            ▼
+ ┌──────┐   ┌──────┐   ┌──────────┐
+ │ CLI  │   │ GUI  │   │ Plugins  │
+ │herdr │   │ herdr│   │ herdr.   │
+ │      │   │-gui  │   │ studio   │
+ └──────┘   └──────┘   └──────────┘
 ```
 
-## Workflows Comunes
+**Flujo:**
+1. `herdr server` corre como proceso systemd
+2. Los agentes (hermes, claude-code, codex) corren en terminales dentro de herdr
+3. Puedes "attach" (adjuntarte) a cualquier terminal desde cualquier lugar
+4. Si cierras SSH o reinicias, los agentes siguen corriendo
 
-### 1. Ver estado de agentes
+## Seguridad
+
+### Autenticación
+- herdr-gui usa token en `~/.config/herdr-gui/auth-token` (modo 0600)
+- El token se envía en cada request API
+- Por defecto solo escucha en localhost (`0.0.0.0:8787`)
+
+### Recomendaciones de seguridad
+1. **No exponer al internet público** sin VPN/túnel
+2. Usar túnel SSH para acceso remoto seguro
+3. El token es secreto - no compartirlo
+4. herdr-studio puede modificar archivos del workspace (riesgo si está expuesto)
+
+### Verificar exposición
 ```bash
-herdr list
-# Muestra: agentes, workspaces, panes activos, estado
+ss -tlnp | grep 8787  # Debería ser 127.0.0.1:8787 o 0.0.0.0:8787
 ```
-
-### 2. Adjuntarse a una terminal
-```bash
-# Desde SSH en el VPS
-herdr attach w1:p1    # workspace w1, pane p1
-```
-
-### 3. Desde el teléfono (herdr-studio)
-- Abrir navegador → ir a la URL de Dokploy
-- Ver workspaces y agentes en tiempo real
-- Poder adjuntarse a terminales
-- Ver output de agentes en ejecución
-
-### 4. Crear nuevo workspace
-```bash
-herdr workspace new mi-proyecto
-herdr pane new        # crear terminal dentro del workspace
-```
-
-## Integración con Hermes
-
-El agente `hermes` corre dentro de herdr como workspace w1. Esto permite:
-- Sesiones persistentes que sobreviven a cierres de SSH
-- Acceso móvil via herdr-studio
-- Múltiples workspaces para diferentes proyectos
-- Control desde cualquier dispositivo con navegador
 
 ## Troubleshooting
 
-### herdr no responde
+### herdr server no responde
 ```bash
 systemctl --user status herdr
-# Si está caído:
-systemctl --user start herdr
+systemctl --user restart herdr
 ```
 
 ### Limpiar socket viejo
@@ -117,18 +126,51 @@ herdr restart
 
 ### Ver logs de errores
 ```bash
-tail -f ~/.config/herdr/herdr-server.log
+journalctl --user -u herdr -f
 ```
 
-### Reiniciar agente
+### Reiniciar agente específico
 ```bash
 herdr agent restart hermes
 ```
 
-## Notas para Distribución
+### herdr-gui falla al arrancar
+```bash
+# El binario puede no estar instalado correctamente
+systemctl --user status herdr-gui
+# Opcionalmente reinstalar:
+herdr plugin install powerfooi/herdr-gui
+```
 
-Al clonar el perfil en otro VPS:
-1. Instalar herdr: `curl -fsSL https://get.herdr.dev | bash`
-2. Iniciar: `systemctl --user enable --now herdr`
-3. Acceder a herdr-studio via navegador en puerto 3000
-4. Configurar Dokploy o reverse proxy si se desea acceso remoto
+## Integración con Hermes
+
+- El agente `hermes` corre dentro de herdr como workspace w1
+- Sesiones persistentes: puedes desconectarte y volver sin perder trabajo
+- Multi-agent: puedes tener hermes, claude-code, codex en diferentes workspaces
+- Control desde móvil: CLI herdr + SSH o web GUI con túnel
+
+## Workflows Comunes
+
+### 1. Iniciar sesión de hermes en herdr
+```bash
+herdr workspace new hermes --cwd ~/.hermes/profiles/telegram-bot
+herdr pane new bash
+herdr send w1:p1 "hermes"
+```
+
+### 2. Ver estado desde el teléfono
+```bash
+ssh ubuntu@xam-vps
+herdr list
+```
+
+### 3. Adjuntarse a una sesión existente
+```bash
+herdr attach w1:p1
+# Ahora estás dentro de la terminal del agente
+```
+
+### 4. Enviar comando sin adjuntarse
+```bash
+herdr send w1:p1 "ls -la"
+```
