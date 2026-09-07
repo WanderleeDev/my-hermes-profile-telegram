@@ -1,0 +1,13 @@
+[Unit]
+Description=SSH Connection Monitor - Telegram Bot Profile
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/ubuntu/.hermes/profiles/telegram-bot/scripts/ssh-monitor.sh
+Restart=always
+RestartSec=10
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[Install]
+WantedBy=default.target
